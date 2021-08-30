@@ -165,27 +165,28 @@ def _encode(image, model, metric, quality, coder, output):
 
     with torch.no_grad():
         out = net.compress(x)
+    return out
 
-    shape = out["shape"]
-    header = get_header(model, metric, quality)
-
-    with Path(output).open("wb") as f:
-        write_uchars(f, header)
-        # write original image size
-        write_uints(f, (h, w))
-        # write shape and number of encoded latents
-        write_uints(f, (shape[0], shape[1], len(out["strings"])))
-        for s in out["strings"]:
-            write_uints(f, (len(s[0]),))
-            write_bytes(f, s[0])
-
-    enc_time = time.time() - enc_start
-    size = filesize(output)
-    bpp = float(size) * 8 / (img.size[0] * img.size[1])
-    print(
-        f"{bpp:.3f} bpp |"
-        f" Encoded in {enc_time:.2f}s (model loading: {load_time:.2f}s)"
-    )
+    # shape = out["shape"]
+    # header = get_header(model, metric, quality)
+    #
+    # with Path(output).open("wb") as f:
+    #     write_uchars(f, header)
+    #     # write original image size
+    #     write_uints(f, (h, w))
+    #     # write shape and number of encoded latents
+    #     write_uints(f, (shape[0], shape[1], len(out["strings"])))
+    #     for s in out["strings"]:
+    #         write_uints(f, (len(s[0]),))
+    #         write_bytes(f, s[0])
+    #
+    # enc_time = time.time() - enc_start
+    # size = filesize(output)
+    # bpp = float(size) * 8 / (img.size[0] * img.size[1])
+    # print(
+    #     f"{bpp:.3f} bpp |"
+    #     f" Encoded in {enc_time:.2f}s (model loading: {load_time:.2f}s)"
+    # )
 
 
 def _decode(inputpath, coder, show, output=None):
